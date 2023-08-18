@@ -84,18 +84,29 @@ def read_image(path, floorplan=None):
     """
     Read image, resize/rescale and return with grayscale
     """
+    # Check if the file exists at the specified path
+    if not os.path.exists(path):
+        print(f"Image file does not exist at path: {path}")
+        return None, None, None
+
+    # Check if the file is accessible
+    if not os.access(path, os.R_OK):
+        print(f"Image file is not accessible at path: {path}")
+        return None, None, None
+
     # Read floorplan image
     img = cv2.imread(path)
-    if img is None:
-        print(f"ERROR: Image {path} could not be read by OpenCV library.")
-        raise IOError
+    
+    # Check if the image is loaded correctly or if it's empty
+    if img is None or img.size == 0:
+        print(f"Failed to load or image is empty at path: {path}")
+        return None, None, None
 
     scale_factor = 1
     if floorplan is not None:
         if floorplan.remove_noise:
             img = image.denoising(img)
         if floorplan.rescale_image:
-
             calibrations = config.read_calibration(floorplan)
             floorplan.wall_size_calibration = calibrations  # Store for debug
             scale_factor = image.detect_wall_rescale(float(calibrations), img)

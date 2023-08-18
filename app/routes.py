@@ -18,6 +18,7 @@ def index():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    print("Upload route called")
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -30,11 +31,15 @@ def upload_file():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
+
+            print("Before calling process_floorplan...")
             
             try:
-                output_filename = process_floorplan(filepath)
+                output_filename = process_floorplan(filepath, "/Applications/Blender.app/Contents/MacOS/Blender")
+
                 return redirect(url_for('download_file', filename=output_filename))
             except Exception as e:
+                print(f"Exception occurred: {e}")
                 flash(f"An error occurred: {e}")
                 return redirect(request.url)
     return render_template('upload.html')

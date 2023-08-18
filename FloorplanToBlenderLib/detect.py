@@ -235,24 +235,30 @@ def outer_contours(detect_img, output_img=None, color=[255, 255, 255]):
 
 def doors(image_path, scale_factor):
     model = cv2.imread(const.DOOR_MODEL, 0)
-    img = cv2.imread(
-        image_path, 0
-    )  # TODO: it is not very effective to read image again here!
+    if model is None:
+        raise ValueError(f"Failed to load the door model image from path: {const.DOOR_MODEL}")
+
+    img = cv2.imread(image_path, 0)
+    if img is None:
+        raise ValueError(f"Failed to load the image from path: {image_path}")
 
     img = image.cv2_rescale_image(img, scale_factor)
     _, doors = feature_match(img, model)
     return doors
 
-
 def windows(image_path, scale_factor):
     model = cv2.imread(const.DOOR_MODEL, 0)
-    img = cv2.imread(
-        image_path, 0
-    )  # TODO: it is not very effective to read image again here!
+    if model is None:
+        raise ValueError(f"Failed to load the door model image from path: {const.DOOR_MODEL}")
+
+    img = cv2.imread(image_path, 0)
+    if img is None:
+        raise ValueError(f"Failed to load the image from path: {image_path}")
 
     img = image.cv2_rescale_image(img, scale_factor)
     windows, _ = feature_match(img, model)
     return windows
+
 
 
 def feature_match(img1, img2):
